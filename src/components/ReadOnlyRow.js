@@ -5,7 +5,7 @@ export const ReadOnlyRow = ({ word, handleEditClick, handleDeleteClick }) => {
     <tr>
       <td>{word.word1}</td>
       <td>{word.word2}</td>
-      <td>{word.relation}</td>
+      <td className="word-relation">{word.relation}</td>
       <td>
         <button type="button" onClick={(e) => handleEditClick(e, word)}>
           Edit

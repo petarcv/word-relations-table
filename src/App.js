@@ -1,15 +1,16 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect } from "react";
 import useLocalStorage from "./hooks/useLocalStorage.js";
 import { nanoid } from "nanoid";
 import { ReadOnlyRow } from "./components/ReadOnlyRow";
 
 import "./App.css";
-import data from "./mock-data-word-relations.json";
+import api from "./api/posts";
+// import data from "./mock-data-word-relations.json";
 import EditRow from "./components/EditRow";
 import { ToastContainer, toast } from "react-toast";
 
 function App() {
-  const [relations, setRelations] = useLocalStorage("relations", data);
+  const [relations, setRelations] = useLocalStorage("relations", []);
   const [addFormData, setAddFormData] = useLocalStorage("formData", {
     word1: "",
     word2: "",
@@ -26,6 +27,19 @@ function App() {
   const areRotations = (str1, str2) => {
     return str1.length === str2.length && (str1 + str1).indexOf(str2) !== -1;
   };
+
+  //decided to use axios to simplify the api calls
+  //fake GET
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const response = await api.get("/items");
+        setRelations(response.data);
+      } catch (err) {}
+    };
+    fetchPosts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleAddFormChange = (e) => {
     e.preventDefault();
@@ -51,7 +65,7 @@ function App() {
     setEditFormData(newFormData);
   };
 
-  const handleSetAddFormSubmit = (e) => {
+  const handleSetAddFormSubmit = async (e) => {
     e.preventDefault();
 
     const newRelation = {
@@ -61,10 +75,16 @@ function App() {
       relation: addFormData.relation,
     };
 
-    const newRelations = [...relations, newRelation];
-
-    if (wordEligibility(newRelations)) {
-      setRelations(newRelations);
+    //fake POST
+    try {
+      const newRelations = [...relations, newRelation];
+      if (wordEligibility(newRelations)) {
+        const response = await api.post("/items", newRelation);
+        const allRelations = [...relations, response.data];
+        setRelations(allRelations);
+      }
+    } catch (err) {
+      console.log("Error: ", err.message);
     }
   };
 
@@ -130,20 +150,26 @@ function App() {
     setEditRelationId(null);
   };
 
-  const handleDeleteClick = (wordId) => {
-    const newRelations = [...relations];
+  //fake DELETE
+  const handleDeleteClick = async (wordId) => {
+    try {
+      await api.delete(`/items/${wordId}`);
+      const newRelations = [...relations];
 
-    const i = relations.findIndex((word) => word.id === wordId);
+      const i = relations.findIndex((word) => word.id === wordId);
 
-    newRelations.splice(i, 1);
+      newRelations.splice(i, 1);
 
-    setRelations(newRelations);
+      setRelations(newRelations);
+    } catch (err) {
+      console.log("Error: ", err.message);
+    }
   };
 
   return (
     <div className="app-container">
       <form onSubmit={handleEditFormSubmit}>
-        <table>
+        <table className="word-table">
           <thead>
             <tr>
               <th>Word 1</th>
@@ -173,7 +199,7 @@ function App() {
           </tbody>
         </table>
       </form>
-      <h2>Add relations and relation</h2>
+      <h2>Add words and relation</h2>
       <form onSubmit={handleSetAddFormSubmit}>
         <input
           type="text"
@@ -203,7 +229,7 @@ function App() {
           onChange={handleAddFormChange}
         ></input>
         <button type="submit">Add</button>
-        <ToastContainer />
+        <ToastContainer delay={3500} />
       </form>
     </div>
   );
