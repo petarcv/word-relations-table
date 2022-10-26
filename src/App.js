@@ -166,8 +166,32 @@ function App() {
     }
   };
 
+  const searchRelationFunction = () => {
+    let input = document.querySelector(".search-field");
+    let filter = input.value.toUpperCase();
+    let table = document.querySelector(".word-table");
+    let tr = table.getElementsByTagName("tr");
+    for (let i = 0; i < tr.length; i++) {
+      let td = tr[i].getElementsByClassName("word-relation")[0];
+      if (td) {
+        let txtValue = td.textContent || td.innerText;
+        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+          tr[i].style.display = "";
+        } else {
+          tr[i].style.display = "none";
+        }
+      }
+    }
+  };
+
   return (
     <div className="app-container">
+      <input
+        type="text"
+        className="search-field"
+        placeholder="Search by relation:"
+        onKeyUp={searchRelationFunction}
+      />
       <form onSubmit={handleEditFormSubmit}>
         <table className="word-table">
           <thead>
