@@ -90,8 +90,8 @@ function App() {
         toast.error("Relation between those words already exists");
         return;
       }
-      return true;
     }
+    return true;
   };
 
   const handleEditFormSubmit = (e) => {
