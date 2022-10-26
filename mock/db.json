@@ -1,0 +1,34 @@
+{
+  "items": [
+    {
+      "id": 1,
+      "word1": "Son",
+      "word2": "Daughter",
+      "relation": "Antonym"
+    },
+    {
+      "id": 2,
+      "word1": "Road",
+      "word2": "Street",
+      "relation": "Synonym"
+    },
+    {
+      "id": 3,
+      "word1": "Road",
+      "word2": "Avenue",
+      "relation": "Related"
+    },
+    {
+      "id": 4,
+      "word1": "Synonym",
+      "word2": "Match",
+      "relation": "Related"
+    },
+    {
+      "id": 5,
+      "word1": "Antonym",
+      "word2": "Synonym",
+      "relation": "Antonym"
+    }
+  ]
+}
